@@ -11,6 +11,7 @@ import torch
 import torch.nn as nn
 from transformers import BertTokenizer, BertModel
 import os
+from pathlib import Path
 
 pb = Blueprint('page', __name__, url_prefix='/page', template_folder='templates')
 
@@ -35,11 +36,12 @@ class SentimentModel(nn.Module):
 
 
 ##模型
-MODEL_PATH = r"C:\Users\Yuikai\Desktop\Context\Gra\winter\saved_models\best_model.pth"
-BERT_PATH = r"C:\Users\Yuikai\Desktop\Gra\BERT1"
-PROJECT_ROOT = r"C:\Users\Yuikai\Desktop\Context\Gra\winter"
-FENCI_DIR = os.path.join(PROJECT_ROOT, "fenci")
-SPIDER_DIR = os.path.join(PROJECT_ROOT, "spider")
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+MODEL_PATH = PROJECT_ROOT / "saved_models" / "best_model.pth"
+BERT_PATH = PROJECT_ROOT / "models" / "BERT1"
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+FENCI_DIR = PROJECT_ROOT / "fenci"
+SPIDER_DIR = PROJECT_ROOT / "spider"
 
 # 初始化分析器
 sentiment_analyzer = None

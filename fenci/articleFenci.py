@@ -16,7 +16,8 @@ def outArticleFreToCsv(sorted_wfc_list):
     :return:
     """
     df = pd.DataFrame(sorted_wfc_list, columns=['热词', '数量'])
-    df.to_csv('article_fre.csv', index=False)
+    from pathlib import Path
+    df.to_csv(Path(__file__).resolve().parent / 'article_fre.csv', index=False)
 
 
 def getStopWordList():

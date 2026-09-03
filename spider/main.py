@@ -30,6 +30,9 @@ def create_db_if_not_exist():
 
 create_db_if_not_exist()
 engine = create_engine('mysql+pymysql://root:123456@localhost:3306/db_weibo3?charset=utf8mb4')
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+ARTICLE_CSV = PROJECT_ROOT / 'spider' / 'article_data.csv'
+COMMENT_CSV = PROJECT_ROOT / 'spider' / 'comment_data.csv'
 
 
 def dataClean():
@@ -68,8 +71,8 @@ def saveToDb():
         newCommentCsv.to_sql('t_comment', con=engine, if_exists='replace', index=False)
 
     # 删除已处理的 CSV 文件（可根据需要保留）
-    os.remove('article_data.csv')
-    os.remove('comment_data.csv')
+    os.remove(PROJECT_ROOT / 'spider' / 'article_data.csv')
+    os.remove(PROJECT_ROOT / 'spider' / 'comment_data.csv')
 
 
 if __name__ == '__main__':
