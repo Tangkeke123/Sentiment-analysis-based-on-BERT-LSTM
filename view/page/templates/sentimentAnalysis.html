@@ -1,0 +1,241 @@
+{% extends "base.html" %}
+
+{% block title %}微博评论舆情分析{% endblock %}
+
+{% block content %}
+    <div class="container-fluid">
+        <!-- 页面标题 -->
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="iq-card">
+                    <div class="iq-card-header d-flex justify-content-between">
+                        <div class="iq-header-title">
+                            <h4 class="card-title">微博评论舆情分析</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 情感统计卡片 -->
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="iq-card iq-card-block iq-card-stretch iq-card-height">
+                    <div class="iq-card-body">
+                        <div class="d-flex align-items-center justify-content-between">
+                            <div>
+                                <h2>{{ stats.total }}</h2>
+                                <p class="mb-0">分析评论总数</p>
+                            </div>
+                            <div class="rounded-circle iq-card-icon iq-bg-info">
+                                <i class="las la-comment-alt"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="iq-card iq-card-block iq-card-stretch iq-card-height">
+                    <div class="iq-card-body">
+                        <div class="d-flex align-items-center justify-content-between">
+                            <div>
+                                <h2>{{ stats.positive }}</h2>
+                                <p class="mb-0">正面评论</p>
+                            </div>
+                            <div class="rounded-circle iq-card-icon iq-bg-success">
+                                <i class="las la-smile"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="iq-card iq-card-block iq-card-stretch iq-card-height">
+                    <div class="iq-card-body">
+                        <div class="d-flex align-items-center justify-content-between">
+                            <div>
+                                <h2>{{ stats.negative }}</h2>
+                                <p class="mb-0">负面评论</p>
+                            </div>
+                            <div class="rounded-circle iq-card-icon iq-bg-danger">
+                                <i class="las la-frown"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 情感分布图表 -->
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="iq-card">
+                    <div class="iq-card-header d-flex justify-content-between">
+                        <div class="iq-header-title">
+                            <h4 class="card-title">评论情感分布</h4>
+                        </div>
+                    </div>
+                    <div class="iq-card-body">
+                        <div id="sentiment-chart" style="height: 400px;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-6">
+                <div class="iq-card">
+                    <div class="iq-card-header d-flex justify-content-between">
+                        <div class="iq-header-title">
+                            <h4 class="card-title">情感比例统计</h4>
+                        </div>
+                    </div>
+                    <div class="iq-card-body">
+                        <table class="table table-bordered">
+                            <thead>
+                            <tr>
+                                <th>情感类型</th>
+                                <th>数量</th>
+                                <th>占比</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td>正面</td>
+                                <td>{{ stats.positive }}</td>
+                                <td>
+                                    {% if stats.total > 0 %}
+                                        {{ "%.1f"|format(stats.positive / stats.total * 100) }}%
+                                    {% else %}
+                                        0%
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>中性</td>
+                                <td>{{ stats.neutral }}</td>
+                                <td>
+                                    {% if stats.total > 0 %}
+                                        {{ "%.1f"|format(stats.neutral / stats.total * 100) }}%
+                                    {% else %}
+                                        0%
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>负面</td>
+                                <td>{{ stats.negative }}</td>
+                                <td>
+                                    {% if stats.total > 0 %}
+                                        {{ "%.1f"|format(stats.negative / stats.total * 100) }}%
+                                    {% else %}
+                                        0%
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 评论列表 -->
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="iq-card">
+                    <div class="iq-card-header d-flex justify-content-between">
+                        <div class="iq-header-title">
+                            <h4 class="card-title">评论情感分析列表</h4>
+                        </div>
+                    </div>
+                    <div class="iq-card-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                <tr>
+                                    <th>用户名</th>
+                                    <th>评论内容</th>
+                                    <th>情感分析</th>
+                                    <th>点赞数</th>
+                                    <th>用户名</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for comment in commentList %}
+                                    <tr>
+                                        <td>{{ comment[0] if comment[0] else '匿名用户' }}</td>
+                                        <td style="max-width: 300px; word-wrap: break-word;">
+                                            {{ comment[1][:100] }}{% if comment[1]|length > 100 %}...{% endif %}
+                                        </td>
+                                        <td>
+                                            {% if comment[-1] == '正面' %}
+                                                <span class="badge badge-success">正面</span>
+                                            {% elif comment[-1] == '负面' %}
+                                                <span class="badge badge-danger">负面</span>
+                                            {% else %}
+                                                <span class="badge badge-warning">中性</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ comment[4] if comment[4] else 0 }}</td>
+                                        <td>{{ comment[7] if comment[7] else '' }}</td>
+                                    </tr>
+                                {% else %}
+                                    <tr>
+                                        <td colspan="5" class="text-center">暂无评论数据</td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block echarts %}
+    <script>
+        // 情感分布图表
+        var sentimentChart = echarts.init(document.getElementById('sentiment-chart'));
+        var option = {
+            title: {
+                text: '评论情感分布',
+                left: 'center'
+            },
+            tooltip: {
+                trigger: 'item',
+                formatter: '{a} <br/>{b}: {c} ({d}%)'
+            },
+            legend: {
+                orient: 'vertical',
+                left: 'left',
+                data: ['正面', '中性', '负面']
+            },
+            series: [
+                {
+                    name: '情感分布',
+                    type: 'pie',
+                    radius: '50%',
+                    data: [
+                        {value: {{ stats.positive }}, name: '正面', itemStyle: {color: '#52c41a'}},
+                        {value: {{ stats.neutral }}, name: '中性', itemStyle: {color: '#faad14'}},
+                        {value: {{ stats.negative }}, name: '负面', itemStyle: {color: '#ff4d4f'}}
+                    ],
+                    emphasis: {
+                        itemStyle: {
+                            shadowBlur: 10,
+                            shadowOffsetX: 0,
+                            shadowColor: 'rgba(0, 0, 0, 0.5)'
+                        }
+                    }
+                }
+            ]
+        };
+        sentimentChart.setOption(option);
+
+        // 响应窗口变化
+        window.addEventListener('resize', function () {
+            sentimentChart.resize();
+        });
+    </script>
+{% endblock %}

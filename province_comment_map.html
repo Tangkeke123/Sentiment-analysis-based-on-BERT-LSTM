@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>测试地图</title>
+    <script src="/static/js/echarts.min.js"></script>
+    <script src="/static/js/china.js"></script>
+    <style>
+        #main {
+            width: 1000px;
+            height: 600px;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+<div id="main"></div>
+<script>
+    // 模拟数据
+    var data = [
+        {name: '广东省', value: 2008},
+        {name: '江苏省', value: 1056},
+        {name: '山东省', value: 976},
+        {name: '浙江省', value: 913},
+        {name: '北京市', value: 878}
+    ];
+
+    var chartDom = document.getElementById('main');
+    var myChart = echarts.init(chartDom);
+
+    var option = {
+        title: {
+            text: '测试地图',
+            left: 'center'
+        },
+        tooltip: {
+            trigger: 'item'
+        },
+        visualMap: {
+            min: 0,
+            max: 2500,
+            left: 'left',
+            top: 'bottom',
+            text: ['高', '低'],
+            calculable: true
+        },
+        series: [{
+            name: '测试数据',
+            type: 'map',
+            mapType: 'china',
+            roam: true,
+            label: {
+                show: true
+            },
+            data: data
+        }]
+    };
+
+    myChart.setOption(option);
+</script>
+</body>
+</html>

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>数据调试</title>
+</head>
+<body>
+<h1>数据调试页面</h1>
+
+<h2>地图数据 (map_data):</h2>
+<pre id="map-data"></pre>
+
+<h2>总评论数 (total_comments):</h2>
+<div id="total-comments"></div>
+
+<h2>Top 地区 (top_regions):</h2>
+<pre id="top-regions"></pre>
+
+<script>
+    // 从模板变量获取数据
+    var mapData = {{ map_data|tojson|safe }};
+    var totalComments = {{ total_comments }};
+    var topRegions = {{ top_regions|tojson|safe }};
+
+    // 显示数据
+    document.getElementById('map-data').textContent = JSON.stringify(mapData, null, 2);
+    document.getElementById('total-comments').textContent = totalComments;
+    document.getElementById('top-regions').textContent = JSON.stringify(topRegions, null, 2);
+
+    // 输出到控制台
+    console.log('地图数据:', mapData);
+    console.log('总评论数:', totalComments);
+    console.log('Top地区:', topRegions);
+
+    // 检查数据有效性
+    if (mapData && mapData.length > 0) {
+        console.log('第一条数据:', mapData[0]);
+        console.log('数据格式检查:');
+        mapData.slice(0, 3).forEach(function (item, index) {
+            console.log(`数据${index + 1}: name="${item.name}", value=${item.value}, type=${typeof item.value}`);
+        });
+    }
+</script>
+</body>
+</html>
