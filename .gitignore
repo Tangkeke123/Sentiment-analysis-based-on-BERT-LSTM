@@ -1,0 +1,17 @@
+# Python cache and virtual environment
+__pycache__/
+*.py[cod]
+.venv/
+
+# IDE and local secrets
+.idea/
+spider/.secret
+
+# Runtime CSV files
+spider/article_data.csv
+spider/comment_data.csv
+
+# Large local model files
+saved_models/*.pth
+saved_models/*.pt
+saved_models/*.bin
